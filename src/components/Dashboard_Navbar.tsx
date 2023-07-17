@@ -12,6 +12,7 @@ const Dashboard_Navbar = ({ navbarShadow }: { navbarShadow: boolean }) => {
   const logoutRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate()
   const user = useRecoilValue(userAtom)
+  const isCreateBasketPage = window.location.pathname == "/create"
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -45,7 +46,7 @@ const Dashboard_Navbar = ({ navbarShadow }: { navbarShadow: boolean }) => {
           <div>Basket Protocol</div>
         </div>
         <div className='flex gap-2'>
-        <button onClick={() => navigate('/create')} className="bg-gray-100 text-custom-500 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px]">Create Basket</button>
+        {!isCreateBasketPage && <button onClick={() => navigate('/create')} className="bg-gray-100 text-custom-500 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px]">Create Basket</button>}
         {
           user?.loggedIn ? 
           <button onClick={() => {}} className="bg-custom-500 text-white-100 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px]">{user.addr}</button>
@@ -55,7 +56,6 @@ const Dashboard_Navbar = ({ navbarShadow }: { navbarShadow: boolean }) => {
       </div>
       <div className="right-1 top-9 fixed flex justify-center items-center space-x-2 hover:opacity-80 cursor-pointer transition duration-200" onClick={handleImageClick}>
         <div>
-          {user?.loggedIn && <img src={avatar} alt="profile" className="w-11 h-11" />}
           {showLogout && (
             <div className="absolute right-6 sm:right-56 rounded-lg shadow-lg my-1 border" ref={logoutRef}>
               <div className="flex space-x-2 px-2 sm:px-5 py-2 rounded-lg bg-white hover:bg-red-200 justify-center items-center">

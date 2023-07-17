@@ -1,12 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Dashboard_Navbar from "../components/Dashboard_Navbar";
 
 import book from "../images/book.svg";
 import token from "../images/token.svg";
+import { GetBasketTokens } from '../cadence/scripts/GetBasketTokens'
 
-import { allTokens, getTokenBySymbol } from "../utils/getTokenDetails";
+import { allTokens, getTokenByIdentifier, getTokenBySymbol } from "../utils/getTokenDetails";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
+import * as fcl from '@onflow/fcl'
+import { getTokenTotalSupply } from "../cadence/scripts/getTokenSupply";
+import { admin } from "../utils/constants";
+import { atom, useRecoilState } from "recoil";
+import { getUnderlyingTokensData } from "../cadence/scripts/GetUnderlyingTokens";
+
 const investmentThemes = [
   {
     title: "Fungible Token Sets",
@@ -20,16 +27,60 @@ const investmentThemes = [
   },
 ];
 
-export type TokenDetails = {
-  name: string;
-  underlyingTokens: string[];
-  symbol: string;
-  image: string;
-  supply: string;
-  company: string;
-};
+export type BasketData = {
+  basketName: string;
+  basketContratName: string;
+  basketSymbol: string;
+  basketCreatorAddress: string;
+  basketImage: string;
+  supply?: number,
+  underlyingTokens: {
+    tokenIdentifier: string,
+    amount: string
+  }[]
+}
+
+export const basketsAtom = atom<BasketData[]>({
+  key: 'baskets',
+  default: undefined
+})
+
 function ExploreDashboard() {
   const [selectedId, setSelectedId] = useState(1);
+  const [baskets, setBaskets] = useRecoilState(basketsAtom)
+
+  useEffect(() => {
+    const getBasketTokens = async () => {
+      const data = await fcl.query({
+          cadence: GetBasketTokens,
+      });
+      
+      if (data) {
+        console.log(data)
+        const basketList: BasketData[] = Object.values(data)
+
+        const supplies = await Promise.all(basketList.map(async(b) => {
+        const underlyingTokens:{
+          tokenIdentifier: string,
+          amount: string
+        }[] = await getUnderlyingTokensData(b.basketContratName)
+          
+          return {
+            ...b,
+            underlyingTokens,
+            supply: Number(await getTokenTotalSupply(b.basketContratName, admin))
+          }
+        }))
+        
+        
+        setBaskets(supplies)
+      }
+    };
+    getBasketTokens()
+
+  }, [])
+  
+  console.log(baskets)
   return (
     <div className="flex flex-col items-center bg-custom-400">
       <Dashboard_Navbar navbarShadow />
@@ -58,8 +109,8 @@ function ExploreDashboard() {
               <p className="w-1/6">Supply</p>
               <p className="w-1/6">Creator</p>
             </div>
-            {allTokens.map((token) => (
-              <TokenDetailCard tokenDetails={token} />
+            {baskets?.map((token) => (
+              <TokenDetailCard basketDetails={token} />
             ))}
           </div>
         </div>
@@ -118,32 +169,32 @@ const ThemeCard = ({
   );
 };
 
-type TokenDetailCardProps = {
-  tokenDetails: TokenDetails;
+type BasketDetailCardProps = {
+  basketDetails: BasketData;
 };
 
-const TokenDetailCard = ({ tokenDetails }: TokenDetailCardProps) => {
+const TokenDetailCard = ({ basketDetails }: BasketDetailCardProps) => {
   const navigate = useNavigate();
   return (
     <>
       <hr className="bg-gray-300" />
-      <div className="flex w-full p-4 hover:scale-[1.01] hover:shadow-md hover:shadow-gray-200 text-gray-600" onClick={() => navigate("/basket")}>
+      <div className="flex cursor-pointer w-full p-4 hover:scale-[1.01] hover:shadow-md hover:shadow-gray-200 text-gray-600" onClick={() => navigate(`/basket/${basketDetails.basketContratName}`)}>
         <div className="w-2/6 pl-2 flex gap-4">
-          <img src={tokenDetails.image} className="h-10 w-10 rounded-full" />
-          <p className="font-semibold text-gray-600">{tokenDetails.name}</p>
+          <img src={basketDetails.basketImage} className="h-10 w-10 rounded-full" />
+          <p className="font-semibold text-gray-600">{basketDetails.basketName}</p>
         </div>
         <div className="w-2/6 flex flex-col gap-4">
-          <p className="font-semibold text-gray-600">{tokenDetails.symbol}</p>
+          <p className="font-semibold text-gray-600">{basketDetails.basketSymbol}</p>
           <div className="flex gap-2">
-            {tokenDetails.underlyingTokens
-              .map((symbol) => getTokenBySymbol(symbol))
+            {basketDetails.underlyingTokens
+              .map((t) => getTokenByIdentifier(t.tokenIdentifier))
               .map((token) => (
-                <TokenIcon {...token} />
+                <TokenIcon {...token}  />
               ))}
           </div>
         </div>
-        <p className="w-1/6">{tokenDetails.supply}</p>
-        <p className="w-1/6">{tokenDetails.company}</p>
+        <p className="w-1/6">{basketDetails.supply?.toFixed(2) ?? 0}</p>
+        <p className="w-1/6">{basketDetails.basketCreatorAddress}</p>
       </div>
     </>
   );
