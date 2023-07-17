@@ -17,8 +17,7 @@ export const getIssueCode = (contractName: string, adminAddress: string) => {
             if !userAccount.getCapability<&${contractName}.Vault{FungibleToken.Receiver}>(/public/${contractName}Vault).check() {
                 let vault <- ${contractName}.createEmptyVault()
                 userAccount.save(<-vault, to: /storage/${contractName}Vault)
-                userAccount.link<&${contractName}.Vault{FungibleToken.Receiver}>(/public/${contractName}Vault, target: /storage/${contractName}Vault)
-                userAccount.link<&${contractName}.Vault{FungibleToken.Balance}>(/public/${contractName}Vault, target: /storage/${contractName}Vault)
+                userAccount.link<&${contractName}.Vault{FungibleToken.Receiver, FungibleToken.Balance}>(/public/${contractName}Vault, target: /storage/${contractName}Vault)
             }
     
             for i, _ in exactAmountOuts {

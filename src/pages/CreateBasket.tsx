@@ -1,10 +1,17 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Dashboard_Navbar from '../components/Dashboard_Navbar'
-import { allTokens, getTokenBySymbol } from '../utils/getTokenDetails'
+import { allTokens } from '../utils/getTokenDetails'
 import { TokenIcon } from './ExploreBasket'
 import ToggleSwitch from '../components/ToggleSwitch'
 import TokenLogoUpload from '../components/TokenLogoUpload'
-import { AllTokens } from '../utils/constants'
+import { AllTokens, admin, adminKey } from '../utils/constants'
+import * as fcl from "@onflow/fcl"
+import { customTokenContract } from '../utils/customTokenContract'
+import { singerAuth } from '../utils/authz'
+import { CreateBasketCode } from '../cadence/transactions/CreateBasket'
+import { subscribeTxStatus } from '../utils/subscribeTxStatus'
+import { useRecoilValue } from 'recoil'
+import { userAtom } from '../App'
 
 export type tokenDetails = {
     tokenName?: string,
@@ -16,9 +23,9 @@ export type tokenDetails = {
 function CreateBasket() {
     const [selectedTokens, setSelectedTokens] = useState<string[]>([])
     const [tokenDetails, setTokenDetails] = useState<tokenDetails>()
-
     const [selectedTokenValues, setSelectedTokenValues] = useState<Record<string, string>>({})
-    const data = allTokens[0]
+
+    const user = useRecoilValue(userAtom)
 
     const handleTokenDetailsChange = (key: keyof tokenDetails, value: string) => {
         setTokenDetails((prev) => {
@@ -27,15 +34,91 @@ function CreateBasket() {
         })
     }
 
-    console.log(tokenDetails, selectedTokens, selectedTokenValues)
+    // createBasket(
+    //     "Sai Index",
+    //     "SAI",
+    //     "SAI",
+    //     user,
+    //     "https://raw.githubusercontent.com/SetProtocol/uniswap-tokenlist/main/assets/tokens/MERGE.png",
+    //     '["A.e45c64ecfe31e465.stFlowToken", "A.e223d8a629e49c68.FUSD"]',
+    //     '[100.0, 1.0]'
+    // )
+    const createBasket = async (
+        basketName: string,
+        basketContratName: string,
+        basketSymbol: string,
+        basketCreatorAddress: string,
+        basketImage: string,
+        underlyingTokens: string,
+        underlyingTokensAmount: string
+    ) => {
+        const contractCode = customTokenContract(
+            basketContratName,
+            "0x9a0766d93b6608b7",
+            underlyingTokens,
+            underlyingTokensAmount
+        );
+        const adminAuth = singerAuth(admin, adminKey);
+
+        console.log(contractCode);
+        // Step -> 0 Create Smart Contract
+        const transactionId = await fcl.mutate({
+            cadence: CreateBasketCode,
+            limit: 9999,
+            args: (arg, t) => [
+                arg(basketName, t.String),
+                arg(basketContratName, t.String),
+                arg(basketSymbol, t.String),
+                arg(basketCreatorAddress, t.Address),
+                arg(basketImage, t.String),
+                arg(Buffer.from(contractCode, "utf-8").toString("hex"), t.String),
+            ],
+            // @ts-ignore-next-line
+            payer: adminAuth,
+            proposer: adminAuth,
+            authorizations: [adminAuth],
+        });
+
+        console.log("Transaction Id : ", transactionId);
+        subscribeTxStatus(transactionId);
+    };
+
+    console.log(tokenDetails?.tokenName!,
+        tokenDetails?.tokenContractName!,
+        tokenDetails?.tokenSymbol!,
+        user?.addr!,
+        tokenDetails?.tokenIcon!,
+        '["' + selectedTokens.join('","') + '"]',
+        '[' + Object.values(selectedTokenValues).map(v => Number(v).toFixed(2)).join(",") + ']')
     
+    const handleRemoveToken = (token: string) => {
+        const updatedSelectedTokens = selectedTokens.filter(t => t!=token)
+        setSelectedTokens(updatedSelectedTokens)
+        const updatedSelectedTokenValues: Record<string, string> = {}
+        updatedSelectedTokens.forEach(t => { updatedSelectedTokenValues[t] = selectedTokenValues[t]})
+        setSelectedTokenValues(updatedSelectedTokenValues)
+    }
+
     return (
         <div className="flex flex-col min-h-screen items-center  bg-custom-400">
             <Dashboard_Navbar navbarShadow />
             <div className='flex flex-col items-center pb-10 md:w-2/3 w-5/6 bg-white-100 rounded-xl my-48 font-mono'>
                 <div className='flex w-full justify-between items-center p-10'>
                     <div className='text-custom-600 text-2xl font-medium'>Create Basket</div>
-                    <button onClick={() => {}} className="bg-custom-500 text-white-100 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px]">Publish</button>
+                    <button 
+                        onClick={() => createBasket(
+                            tokenDetails?.tokenName!,
+                            tokenDetails?.tokenContractName!,
+                            tokenDetails?.tokenSymbol!,
+                            user?.addr!,
+                            tokenDetails?.tokenIcon!,
+                            '["' + selectedTokens.join('","') + '"]',
+                            '[' + Object.values(selectedTokenValues).map(v => Number(v).toFixed(2)).join(",") + ']'
+                        )}
+                        className="bg-custom-500 text-white-100 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px]"
+                    >
+                        Publish
+                    </button>
                 </div>
                 <hr className='bg-custom-400 w-5/6' />
                 <div className='flex flex-col w-full gap-4 items-center'>
@@ -82,13 +165,13 @@ function CreateBasket() {
                                     <ToggleSwitch 
                                         id={token?.symbol!} 
                                         checked={selectedTokens.includes(key)}  
-                                        onChange={() => selectedTokens.includes(key) ? setSelectedTokens((prev) => prev.filter(t => t!=key)) : setSelectedTokens((prev) => [...prev, key])}
+                                        onChange={() => selectedTokens.includes(key) ? handleRemoveToken(key) : setSelectedTokens((prev) => [...prev, key])}
                                     />
                                     {
                                         selectedTokens.includes(key) && 
                                         <input
                                             placeholder={`${token?.symbol} value`}
-                                            value={selectedTokenValues[token?.symbol!] ?? ""}
+                                            value={selectedTokenValues[key] ?? ""}
                                             onChange={(e) => setSelectedTokenValues((prev) => ({...prev, [key]: e.target.value}))}
                                             className="rounded-md text-base px-2 focus:outline-none border-b-[1px] border-gray-200"
                                         />

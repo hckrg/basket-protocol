@@ -1,7 +1,8 @@
 export const customTokenContract = (
     tokenName: string,
     fungibleTokenStandardAddress: string,
-    underlyingTokens: string
+    underlyingTokens: string,
+    underlyingTokensAmount: string
   ) => {
     return `
     import FungibleToken from ${fungibleTokenStandardAddress}
@@ -35,6 +36,7 @@ export const customTokenContract = (
  
        /// Underlying Token
        access(self) let underlyingTokens: [String]
+       access(self) let underlyingTokensAmount: [UFix64]
    
        pub resource Vault: FungibleToken.Provider, FungibleToken.Receiver, FungibleToken.Balance {
            pub var balance: UFix64
@@ -73,6 +75,10 @@ export const customTokenContract = (
        pub fun getUnderlyingTokens(): [String] {
          return self.underlyingTokens
        }
+
+       pub fun getUnderlyingTokensAmount(): [UFix64] {
+        return self.underlyingTokensAmount
+      }
    
        pub resource Minter {
            pub fun mintTokens(amount: UFix64): @FungibleToken.Vault {
@@ -96,6 +102,7 @@ export const customTokenContract = (
    
            self.account.save(<- create Minter(), to: ${tokenName}.TokenMinterStoragePath)
            self.underlyingTokens = ${underlyingTokens}
+           self.underlyingTokensAmount = ${underlyingTokensAmount}
           //
           // Create an Empty Vault for the Minter
           //
@@ -104,4 +111,3 @@ export const customTokenContract = (
        }
     }`;
   };
-  
