@@ -12,7 +12,7 @@ function AppRoutes() {
                 Component={ExploreDashboard}
             />
             <Route 
-                path='/basket'
+                path='/basket/:contractName'
                 Component={ExploreBasket}
             />
             <Route 
