@@ -1,112 +1,58 @@
 import Dashboard_Navbar from "../components/Dashboard_Navbar"
 import logo from '../assets/react.svg'
-import { getTokenBySymbol } from "../utils/getTokenDetails";
-const investmentThemes = [
-    {
-        title: "Thematic Exposure",
-        subTitle: "Built around a single theme",
-        id: 1
-    },
-    {
-        title: "Thematic Exposure",
-        subTitle: "Built around a single theme",
-        id: 2
-    },
-    {
-        title: "Thematic Exposure",
-        subTitle: "Built around a single theme",
-        id: 3
-    }
-]
-
-
-
-const data = [
-    {
-        name: "DEfi Pulse Index",
-        symbol: "DFI",
-        underlyingTokens: ["FLOW", "FUSD", "OT", "DUST"],
-        supply: "2.5",
-        company: "Moonrock",
-    },
-    {
-        name: "JPG Index",
-        symbol: "JPG",
-        underlyingTokens: ["FLOW", "FUSD", "OT", "DUST"],
-        supply: "1.8",
-        company: "Company 2",
-    },
-    {
-        name: "Metaverse Backed",
-        symbol: "META",
-        underlyingTokens: ["FLOW", "FUSD", "OT", "DUST"],
-        supply: "3.2",
-        company: "Company 3",
-    },
-    {
-        name: "DEFI BULLS",
-        symbol: "DFIB",
-        underlyingTokens: ["FLOW", "FUSD", "OT", "DUST"],
-        supply: "2.1",
-        company: "Company 4",
-    },
-    {
-        name: "Climate preserving",
-        symbol: "CLI",
-        underlyingTokens: ["FLOW", "FUSD", "OT", "DUST"],
-        supply: "1.6",
-        company: "Company 5",
-    },
-];
-
-type TokenDetails = {
-    name: string,
-    underlyingTokens: string[],
-    symbol: string,
-    supply: string,
-    company: string
-}
+import { allTokens, getTokenBySymbol } from "../utils/getTokenDetails";
 
 function ExploreBasket() {
+    const data = allTokens[0]
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center  bg-custom-400">
             <Dashboard_Navbar navbarShadow />
-            <div className="flex flex-col w-5/6 mt-40 px-10">
-                <div className="font-semibold text-xs underline cursor-pointer mb-4 text-gray-400">{"<"} Back to explore</div>
+            <div className="flex flex-col w-2/3 mt-40 h-screen bg-custom-400">
+                <div className="font-semibold text-base cursor-pointer mb-7 px-1 text-gray-400">{"<"} Back to explore</div>
                 <div className="flex justify-between">
                     <div className="flex items-center gap-2">
-                        <img className="h-8 w-8 rounded-full" src={logo}/>
-                        <div className="flex flex-col gap-2 text-2xl">
-                            <p>Defi Pulse Index</p>
-                            <p className="text-gray-400">DFI</p>
+                        <img className="h-[50px] w-[50px] rounded-full mr-4" src={data.image} />
+                        <div className="flex flex-col">
+                            <p className="text-4xl font-medium">{data.name}</p>
+                            <p className="text-gray-400 font-semibold text-2xl">{data.symbol}</p>
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <button onClick={() => {}} className="bg-green-900 hover:bg-green-800 text-white font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px] mt-4">Buy</button>
-                        <button onClick={() => {}} className="bg-green-900 hover:bg-green-800 text-white font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px] mt-4">Redeem</button>
+                        <button onClick={() => { }} className="bg-custom-500 text-white-100 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px] mt-4">Buy</button>
+                        <button onClick={() => { }} className="bg-custom-500 text-white-100 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px] mt-4">Redeem</button>
                     </div>
                 </div>
-                    <div className="border-[1px] w-full border-gray-400 rounded-md my-10">
-                        <div className="flex justify-between w-full pb-4 pt-12 text-sm px-10 text-gray-400">
-                            <p className="">Token</p>
-                            <p className="">Quantity per basket</p>
-                        </div>
-                        <hr className="bg-gray-200"/>
-                        <div className="flex justify-between w-full  p-10 ">
-                            <TokenIcon logo={logo} symbol={data[0].name}/>
-                        </div>
-                        <div className="py-2 px-10 bg-gray-200 text-sm text-gray-800">
-                            underlying tokens
-                        </div>
-                        {
-                            data[0].underlyingTokens.map(s => getTokenBySymbol(s)).map((token) => (
-                                <div className="flex justify-between w-full py-6 px-10 ">
-                                    <TokenIcon logo={token?.logo} symbol={token?.name}/>
-                                    <p>1321.12 {token?.symbol}</p>
-                                </div>
-                            ))
-                        }
+                <div className="border-[1px] w-full border-gray-200 rounded-md my-10 bg-white-100">
+                    <div className="flex justify-between w-full py-4 text-sm px-10 text-gray-400">
+                        <p className="">Token</p>
+                        <p className="">Quantity per basket</p>
                     </div>
+                    <hr className="bg-gray-200" />
+                    <div className="flex justify-between w-full py-7 px-10 ">
+                        <TokenIcon logo={data.image} symbol={data.name} />
+                    </div>
+                    <div className="py-2 px-10 bg-custom-300 text-sm font-semibold text-gray-500">
+                        Underlying Tokens
+                    </div>
+                    {
+                        data.underlyingTokens.map(s => getTokenBySymbol(s)).map((token) => (
+                            <div className="flex justify-between w-full py-6 px-10 ">
+                                <TokenIcon logo={token?.logo} symbol={token?.name} />
+                                <p>10 {token?.symbol}</p>
+                            </div>
+                        ))
+                    }
+
+                </div>
+                <div className="flex-col">
+                    <div className="text-black-100 font-medium text-2xl mt-4">About</div>
+                    <div className="w-full h-[1px] bg-gray-400 my-4"></div>
+                    <p className="text-gray-500">
+                        DEFI has ventured into new L2 lands! Inspired by our Layer 1 based Blue Chip & Innovation Index, this product focuses on a diversified Polygon-native asset portfolio. All DEFI portfolios are discretionarily traded using a blend of technical analysis swing trading indicators and fundamental driven factors alongside the specific token inclusion criterias for each portfolio theme.
+                        Dive deeper into the methodology by visiting the official DEFI website. DEFI has ventured into new L2 lands! Inspired by our Layer 1 based Blue Chip & Innovation Index, this product focuses on a diversified Polygon-native asset portfolio. All DEFI portfolios are discretionarily traded using a blend of technical analysis swing trading indicators and fundamental driven factors alongside the specific token inclusion criterias for each portfolio theme.
+                        Dive deeper into the methodology by visiting the official DEFI website
+                    </p>
+                </div>
             </div>
         </div>
     )
@@ -117,10 +63,10 @@ type TokenDetailCardProps = {
     tokenDetails: TokenDetails
 }
 
-const TokenDetailCard = ({tokenDetails}: TokenDetailCardProps) => {
+const TokenDetailCard = ({ tokenDetails }: TokenDetailCardProps) => {
     return (
         <>
-            <hr className="bg-gray-300"/>
+            <hr className="bg-gray-300" />
             <div className="flex w-full p-4 hover:scale-[1.01] hover:shadow-md hover:shadow-gray-200 text-gray-600">
                 <div className="w-1/4 flex gap-4">
                     <img src={logo} className="h-6 w-6 rounded-full" />

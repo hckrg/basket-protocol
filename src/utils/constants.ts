@@ -15,15 +15,21 @@ export const tempTokens: baseToken[] = [
         decimals: 8,
     },
     {
-        symbol: "OT",
-        name: "Origin Token",
-        logo: "https://cdn.jsdelivr.net/gh/FlowFans/flow-token-list@main/token-registry/A.789550432627e16c.OriginToken/logo.svg",
+        symbol: "stFlow",
+        name: "st Flow Token",
+        logo: "https://cdn.jsdelivr.net/gh/FlowFans/flow-token-list@main/token-registry/A.d6f80565193ad727.stFlowToken/logo.svg",
         decimals: 8,
     },
     {
         symbol: "DUST",
         name: "Flovatar ÐUST",
         logo: "http://images.flovatar.com/logo-round.png",
+        decimals: 8,
+    },
+    {
+        symbol: "USDC",
+        name: "Fiat Token",
+        logo: "https://cdn.jsdelivr.net/gh/FlowFans/flow-token-list@main/token-registry/A.b19436aae4d94622.FiatToken/logo.svg",
         decimals: 8,
     },
 ];

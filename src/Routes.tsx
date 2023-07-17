@@ -8,16 +8,12 @@ function AppRoutes() {
         <Routes>
             <Route 
                 path='/'
+                Component={ExploreDashboard}
+            />
+            <Route 
+                path='/basket'
                 Component={ExploreBasket}
             />
-            {/* <Route 
-                path='/token/:tokenId'
-                Component={TokenDetails}
-            />
-            <Route
-                path='create'
-                Component={CreateToken}
-            /> */}
         </Routes>
     </BrowserRouter>
   )
