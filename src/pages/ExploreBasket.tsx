@@ -1,14 +1,16 @@
 import Dashboard_Navbar from "../components/Dashboard_Navbar"
 import logo from '../assets/react.svg'
 import { allTokens, getTokenBySymbol } from "../utils/getTokenDetails";
+import { useNavigate } from "react-router-dom";
 
 function ExploreBasket() {
+    const navigate = useNavigate()
     const data = allTokens[0]
     return (
         <div className="flex flex-col items-center  bg-custom-400">
             <Dashboard_Navbar navbarShadow />
             <div className="flex flex-col w-2/3 mt-40 h-screen bg-custom-400">
-                <div className="font-semibold text-base cursor-pointer mb-7 px-1 text-gray-400">{"<"} Back to explore</div>
+                <div onClick={() => navigate("/")} className="font-semibold text-base cursor-pointer mb-7 px-1 text-gray-400">{"<"} Back to explore</div>
                 <div className="flex justify-between">
                     <div className="flex items-center gap-2">
                         <img className="h-[50px] w-[50px] rounded-full mr-4" src={data.image} />

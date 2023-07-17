@@ -6,6 +6,7 @@ import token from "../images/token.svg";
 
 import { allTokens, getTokenBySymbol } from "../utils/getTokenDetails";
 import classNames from "classnames";
+import { useNavigate } from "react-router-dom";
 const investmentThemes = [
   {
     title: "Fungible Token Sets",
@@ -122,10 +123,11 @@ type TokenDetailCardProps = {
 };
 
 const TokenDetailCard = ({ tokenDetails }: TokenDetailCardProps) => {
+  const navigate = useNavigate();
   return (
     <>
       <hr className="bg-gray-300" />
-      <div className="flex w-full p-4 hover:scale-[1.01] hover:shadow-md hover:shadow-gray-200 text-gray-600">
+      <div className="flex w-full p-4 hover:scale-[1.01] hover:shadow-md hover:shadow-gray-200 text-gray-600" onClick={() => navigate("/basket")}>
         <div className="w-2/6 pl-2 flex gap-4">
           <img src={tokenDetails.image} className="h-10 w-10 rounded-full" />
           <p className="font-semibold text-gray-600">{tokenDetails.name}</p>
