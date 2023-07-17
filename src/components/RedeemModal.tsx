@@ -71,7 +71,7 @@ function RedeemTokenModal({ onClose, basketDetails}: IssueTokenModalProps) {
         })
 
         console.log("Transaction Id : ", txId)
-        subscribeTxStatus(txId)        
+        subscribeTxStatus(txId, onClose)        
     }
 
     useEffect(() => {

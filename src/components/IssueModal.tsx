@@ -64,7 +64,7 @@ function IssueTokenModal({ onClose, basketDetails, type}: IssueTokenModalProps) 
         })
 
         console.log("Transaction Id : ", txId)
-        subscribeTxStatus(txId)          
+        subscribeTxStatus(txId, onClose)          
     }
 
     return (
