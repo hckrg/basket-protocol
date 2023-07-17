@@ -9,6 +9,7 @@ import { getIssueCode } from "../cadence/transactions/IssueBasket"
 import * as fcl from '@onflow/fcl'
 import { singerAuth, userSign } from "../utils/authz"
 import { subscribeTxStatus } from "../utils/subscribeTxStatus"
+import classNames from "classnames"
 
 export type IssueTokenModalProps = {
     onClose: () => void,
@@ -21,6 +22,7 @@ function IssueTokenModal({ onClose, basketDetails, type}: IssueTokenModalProps) 
     const msg = type == "issue" ? "Buy": "Redeem"
     const [value, setValue] = useState(0)
     const [totalFlow, setTotalFlow] = useState("0")
+    const [disable, setDisable] = useState(true)
 
     const udTokenAmount = basketDetails?.underlyingTokens.map(u => (Number(u.amount)*value).toFixed(2))
     const udTokenAddress = basketDetails?.underlyingTokens.map(u => u.tokenIdentifier)
@@ -28,9 +30,13 @@ function IssueTokenModal({ onClose, basketDetails, type}: IssueTokenModalProps) 
     const adminAuth = singerAuth(admin, adminKey)
         
     const calculateFlow = async() => {
+        setDisable(true)
         if (udTokenAddress && udTokenAmount){
             const data = await getAmountsIn(udTokenAmount, udTokenAddress)
             const totalAmount = (data.map((d: any) => Number(d)).reduce((x: any, y: any) => x + y, 0) * (100 + slippage)) / 100
+            if (totalAmount && totalAmount > 0 && value > 0) {
+                setDisable(false)
+            }
             setTotalFlow(totalAmount.toFixed(2))
         }
     }
@@ -99,7 +105,10 @@ function IssueTokenModal({ onClose, basketDetails, type}: IssueTokenModalProps) 
                             <p>{totalFlow ?? 0} FLOW</p>
                         </div>
                     </div>
-                    <button onClick={handleIssue} className="bg-custom-500 text-white-100 font-bold py-2 my-2 px-6 rounded-lg cursor-pointer w-full">{msg}</button>
+                    <button disabled={disable} onClick={handleIssue} className={
+                        classNames("bg-custom-500 text-white-100 font-bold py-2 my-2 px-6 rounded-lg cursor-pointer w-5/6", {
+                            "bg-gray-400": disable
+                        })}>{msg}</button>
                 </div>
             </div>
         </div>

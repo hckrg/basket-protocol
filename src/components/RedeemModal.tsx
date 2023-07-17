@@ -14,6 +14,7 @@ import { useRecoilValue } from "recoil"
 import { userAtom } from "../App"
 import { subscribeTxStatus } from "../utils/subscribeTxStatus"
 import { getBasketBalance } from "../cadence/scripts/getFlowBalance"
+import classNames from "classnames"
 
 export type IssueTokenModalProps = {
     onClose: () => void,
@@ -25,6 +26,8 @@ function RedeemTokenModal({ onClose, basketDetails}: IssueTokenModalProps) {
     const [value, setValue] = useState(0)
     const [totalFlow, setTotalFlow] = useState("0")
     const [amountOut, setAmountOut] = useState<string[]>([])
+    const [disable, setDisable] = useState(true)
+
     const user = useRecoilValue(userAtom)
     const [tokenBal, setTokenBal] = useState<string>();
     const udTokenAmount = basketDetails?.underlyingTokens.map(u => (Number(u.amount)*value).toFixed(2))
@@ -33,9 +36,13 @@ function RedeemTokenModal({ onClose, basketDetails}: IssueTokenModalProps) {
     const adminAuth = singerAuth(admin, adminKey)
         
     const calculateFlow = async() => {
+        setDisable(true)
         if (udTokenAddress && udTokenAmount){
             const data = await getAmountsOut(udTokenAmount, udTokenAddress)
             const totalAmount = (data.map((d: any) => Number(d)).reduce((x: any, y: any) => x + y, 0) * (100 - slippage)) / 100
+            if (totalAmount && totalAmount > 0 && value > 0) {
+                setDisable(false)
+            }
             setTotalFlow(totalAmount.toFixed(2))
             setAmountOut(data.map((d: any) => Number(d)* (100 - slippage) / 100).map((p: any) => p.toFixed(2)))
         }
@@ -109,7 +116,10 @@ function RedeemTokenModal({ onClose, basketDetails}: IssueTokenModalProps) {
                             <p>{totalFlow ?? 0} FLOW</p>
                         </div>
                     </div>
-                    <button onClick={handleIssue} className="bg-custom-500 text-white-100 font-bold py-2 my-2 px-6 rounded-lg cursor-pointer w-5/6">Redeem</button>
+                    <button disabled={disable} onClick={handleIssue} 
+                        className={classNames("bg-custom-500 text-white-100 font-bold py-2 my-2 px-6 rounded-lg cursor-pointer w-5/6", {
+                            "bg-gray-400": disable
+                        })}>Redeem</button>
                 </div>
             </div>
     )
