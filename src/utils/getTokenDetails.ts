@@ -1,5 +1,5 @@
 import { baseToken } from "../globalTypes"
-import { tempTokens } from "./constants"
+import { AllTokens, tempTokens } from "./constants"
 import index1 from "../images/index-1.svg";
 import index2 from "../images/index-2.png";
 import index3 from "../images/index-3.svg";
@@ -52,4 +52,8 @@ export const allTokens = [
 
 export const getTokenBySymbol = (symbol: string): baseToken | undefined => {
     return tempTokens.find((token) => token.symbol == symbol)
+}
+
+export const getTokenByIdentifier = (identifier: any) => {
+    return AllTokens[identifier]
 }
