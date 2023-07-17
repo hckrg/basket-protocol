@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import ExploreDashboard from './pages/ExploreDashboard'
 import ExploreBasket from './pages/ExploreBasket'
+import CreateBasket from './pages/CreateBasket'
 
 function AppRoutes() {
   return (
@@ -13,6 +14,10 @@ function AppRoutes() {
             <Route 
                 path='/basket'
                 Component={ExploreBasket}
+            />
+            <Route 
+                path='/create'
+                Component={CreateBasket}
             />
         </Routes>
     </BrowserRouter>
