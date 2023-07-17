@@ -46,7 +46,7 @@ const Dashboard_Navbar = ({ navbarShadow }: { navbarShadow: boolean }) => {
           <div>Basket Protocol</div>
         </div>
         <div className='flex gap-2'>
-        {!isCreateBasketPage && <button onClick={() => navigate('/create')} className="bg-gray-100 text-custom-500 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px]">Create Basket</button>}
+        {!isCreateBasketPage && user?.loggedIn && <button onClick={() => navigate('/create')} className="bg-gray-100 text-custom-500 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px]">Create Basket</button>}
         {
           user?.loggedIn ? 
           <button onClick={() => {}} className="bg-custom-500 text-white-100 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px]">{user.addr}</button>
