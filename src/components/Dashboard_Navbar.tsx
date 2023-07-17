@@ -5,9 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { userAtom } from '../App';
 import * as fcl from '@onflow/fcl'
+import { getFlowBalance } from '../cadence/scripts/getFlowBalance';
+import { convertToTwoDecimalPlaces } from '../utils/constants';
+import flowLogo from "../images/flow.svg";
 
 const Dashboard_Navbar = ({ navbarShadow }: { navbarShadow: boolean }) => {
   const [showLogout, setShowLogout] = useState(false);
+  const [flowBalance, setFlowBalance] = useState<string>();
 
   const logoutRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate()
@@ -38,6 +42,15 @@ const Dashboard_Navbar = ({ navbarShadow }: { navbarShadow: boolean }) => {
     console.log("Showing Prices...");
   };
 
+  useEffect(() => {
+    if(user && user.loggedIn) {
+      (async () => {
+        const bal = await getFlowBalance(user.addr ?? "")
+        setFlowBalance(bal)
+      })()
+    }
+  }, [user])
+
   return (
     <>
       <div className={`flex flex-row bg-white-100 fixed top-4 rounded-2xl !w-4/6  ${navbarShadow ? 'shadow-md shadow-gray-200' : ''} z-10 bg-white w-full py-6 p-5 sm:px-9 justify-between items-center bg-custom-400`}>
@@ -64,12 +77,12 @@ const Dashboard_Navbar = ({ navbarShadow }: { navbarShadow: boolean }) => {
             </div>
           )}
         </div>
-        {/* {
-          user?.loggedIn ? <div className="text-gray-500 text-sm opacity-0 left-0 top-0 sm:pr-8 absolute sm:opacity-100 sm:static">
-            Anurag
-          </div> : <button onClick={async() => await fcl.authenticate()} className="bg-custom-500 text-white-100 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px]">Connect Wallet</button>
+        {
+          user?.loggedIn ? <div className="flex text-gray-500 text-sm opacity-0 items-center left-0 top-0 sm:pr-8 absolute sm:opacity-100 sm:static">
+           <img src={flowLogo} className="mr-2 w-8 h-8"/><p className='text-base font-bold'>{convertToTwoDecimalPlaces(flowBalance!)}</p>
+          </div> : <></>
 
-        } */}
+        }
       </div>
     </>
   );

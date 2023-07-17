@@ -13,6 +13,7 @@ import { getRedeemCode } from "../cadence/transactions/RedeemBasket"
 import { useRecoilValue } from "recoil"
 import { userAtom } from "../App"
 import { subscribeTxStatus } from "../utils/subscribeTxStatus"
+import { getBasketBalance } from "../cadence/scripts/getFlowBalance"
 
 export type IssueTokenModalProps = {
     onClose: () => void,
@@ -25,7 +26,7 @@ function RedeemTokenModal({ onClose, basketDetails}: IssueTokenModalProps) {
     const [totalFlow, setTotalFlow] = useState("0")
     const [amountOut, setAmountOut] = useState<string[]>([])
     const user = useRecoilValue(userAtom)
-
+    const [tokenBal, setTokenBal] = useState<string>();
     const udTokenAmount = basketDetails?.underlyingTokens.map(u => (Number(u.amount)*value).toFixed(2))
     const udTokenAddress = basketDetails?.underlyingTokens.map(u => u.tokenIdentifier)
     const slippage = 10 // 5%
@@ -73,11 +74,20 @@ function RedeemTokenModal({ onClose, basketDetails}: IssueTokenModalProps) {
         subscribeTxStatus(txId)        
     }
 
+    useEffect(() => {
+        if(user && user.loggedIn) {
+          (async () => {
+            const bal = await getBasketBalance(basketDetails?.basketContratName! ,user.addr ?? "")
+            setTokenBal(bal)
+          })()
+        }
+    }, [user])
+
     return (
         <div className="bg-white-100 w-96 mx-4 p-4 rounded-xl">
             <div className="flex justify-center flex-col items-center border-b border-gray-200 py-3" >
                 <div className="flex w-full px-5 items-center justify-between">
-                    <p className="text-xl font-bold text-gray-800">Redeem ${basketDetails?.basketSymbol}</p>
+                    <p className="text-xl font-bold text-gray-800">Redeem {basketDetails?.basketSymbol}</p>
                     <div onClick={onClose} className=" hover:bg-gray-500 cursor-pointer hover:text-gray-300 font-sans text-gray-500 w-8 h-8 flex items-center justify-center rounded-full" > X </div>
                 </div>
             </div>
@@ -90,10 +100,10 @@ function RedeemTokenModal({ onClose, basketDetails}: IssueTokenModalProps) {
                         type="number"
                         className="rounded-md text-base w-full px-6 py-2 mt-8 focus:outline-none bg-gray-50 border-[1px] border-gray-200"
                     />
-                    <div className="flex w-full justify-between">
+                     {tokenBal && <div className="flex w-full justify-between">
                         <p className="text-sm text-gray-400">Balance: </p>
-                        <p className="text-sm text-gray-400">5 ${basketDetails?.basketSymbol}</p>
-                    </div>
+                        <p className="text-sm text-gray-400">{tokenBal} {basketDetails?.basketSymbol}</p>
+                    </div>}
                         <div className="flex justify-between w-full pt-6 ">
                             <p>Redeemed Flow amount</p>
                             <p>{totalFlow ?? 0} FLOW</p>

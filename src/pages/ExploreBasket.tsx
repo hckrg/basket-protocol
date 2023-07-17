@@ -50,7 +50,7 @@ function ExploreBasket() {
                         <img className="h-[50px] w-[50px] rounded-full mr-4" src={basketDetails?.basketImage} />
                         <div className="flex flex-col">
                             <p className="text-4xl font-medium">{basketDetails?.basketName}</p>
-                            <p className="text-gray-400 font-semibold text-2xl">${basketDetails?.basketSymbol}</p>
+                            <p className="text-gray-400 font-semibold text-2xl">{basketDetails?.basketSymbol}</p>
                         </div>
                     </div>
                     <div className="flex gap-2">

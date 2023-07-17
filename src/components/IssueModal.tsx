@@ -18,7 +18,7 @@ export type IssueTokenModalProps = {
 
 
 function IssueTokenModal({ onClose, basketDetails, type}: IssueTokenModalProps) {
-    const msg = type == "issue" ? "Mint": "Redeem"
+    const msg = type == "issue" ? "Buy": "Redeem"
     const [value, setValue] = useState(0)
     const [totalFlow, setTotalFlow] = useState("0")
 
@@ -71,7 +71,7 @@ function IssueTokenModal({ onClose, basketDetails, type}: IssueTokenModalProps) 
         <div className="bg-white-100 w-96 mx-4 p-4 rounded-xl">
             <div className="flex justify-center flex-col items-center border-b border-gray-200 py-3" >
                 <div className="flex w-full px-5 items-center justify-between">
-                    <p className="text-xl font-bold text-gray-800">{msg} ${basketDetails?.basketSymbol}</p>
+                    <p className="text-xl font-bold text-gray-800">{msg} {basketDetails?.basketSymbol}</p>
                     <div onClick={onClose} className=" hover:bg-gray-500 cursor-pointer hover:text-gray-300 font-sans text-gray-500 w-8 h-8 flex items-center justify-center rounded-full" > X </div>
                 </div>
             </div>

@@ -84,3 +84,25 @@ export function getTimestamp10MinutesAfterCurrentTime(): number {
     const tenMinutesLater = new Date(currentTime.getTime() + 10 * 60 * 1000); // Adding 10 minutes in milliseconds
     return Math.floor(tenMinutesLater.getTime() / 1000); // Converting to UNIX timestamp (seconds since epoch)
   }
+
+  export function convertToTwoDecimalPlaces(numberStr: string): string {
+    try {
+      // Convert the string to a number
+      const number: number = parseFloat(numberStr);
+  
+      // Check if the number is NaN
+      if (isNaN(number)) {
+        throw new Error("Invalid input");
+      }
+  
+      // Round the number to two decimal places
+      const roundedNumber: number = Math.round(number * 100) / 100;
+  
+      // Convert the rounded number to a string with two decimal places
+      const resultStr: string = roundedNumber.toFixed(2);
+  
+      return resultStr;
+    } catch (error) {
+      return "Invalid input";
+    }
+  }
