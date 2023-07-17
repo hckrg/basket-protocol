@@ -3,7 +3,7 @@ import AppRoutes from './Routes'
 import { useEffect } from 'react'
 import * as fcl from '@onflow/fcl'
 
-export const userAtom = atom<{loggedIn: boolean} | null>({
+export const userAtom = atom<{loggedIn: boolean, addr?: string} | null>({
     key: 'userAtom',
     default: null
 })

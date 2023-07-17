@@ -44,7 +44,14 @@ const Dashboard_Navbar = ({ navbarShadow }: { navbarShadow: boolean }) => {
           <img src={logo} alt="logo" className="w-7 h-7" />
           <div>Basket Protocol</div>
         </div>
-        <button onClick={() => navigate('/create')} className="bg-custom-500 text-white-100 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px]">Create Basket</button>
+        <div className='flex gap-2'>
+        <button onClick={() => navigate('/create')} className="bg-gray-100 text-custom-500 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px]">Create Basket</button>
+        {
+          user?.loggedIn ? 
+          <button onClick={() => {}} className="bg-custom-500 text-white-100 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px]">{user.addr}</button>
+          : <button onClick={async() => await fcl.authenticate()} className="bg-custom-500 text-white-100 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px]">Connect Wallet</button>
+        }
+        </div>
       </div>
       <div className="right-1 top-9 fixed flex justify-center items-center space-x-2 hover:opacity-80 cursor-pointer transition duration-200" onClick={handleImageClick}>
         <div>
@@ -57,12 +64,12 @@ const Dashboard_Navbar = ({ navbarShadow }: { navbarShadow: boolean }) => {
             </div>
           )}
         </div>
-        {
+        {/* {
           user?.loggedIn ? <div className="text-gray-500 text-sm opacity-0 left-0 top-0 sm:pr-8 absolute sm:opacity-100 sm:static">
             Anurag
           </div> : <button onClick={async() => await fcl.authenticate()} className="bg-custom-500 text-white-100 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px]">Connect Wallet</button>
 
-        }
+        } */}
       </div>
     </>
   );

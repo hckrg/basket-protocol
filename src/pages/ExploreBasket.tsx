@@ -3,11 +3,17 @@ import logo from '../assets/react.svg'
 import { allTokens, getTokenBySymbol } from "../utils/getTokenDetails";
 import { useNavigate } from "react-router-dom";
 import { TokenDetails } from "./ExploreDashboard";
+import { useState } from "react";
+import IssueTokenModal from "../components/IssueModal";
 
 function ExploreBasket() {
+    const [showIssueModal, setShowIssueModal] = useState(false)
+    const [showRedeemModal, setShowRedeemModal] = useState(false)
+
     const navigate = useNavigate()
     const data = allTokens[0]
     return (
+        <>
         <div className="flex flex-col items-center  bg-custom-400">
             <Dashboard_Navbar navbarShadow />
             <div className="flex flex-col w-2/3 mt-40 h-screen bg-custom-400">
@@ -21,8 +27,8 @@ function ExploreBasket() {
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <button onClick={() => { }} className="bg-custom-500 text-white-100 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px] mt-4">Buy</button>
-                        <button onClick={() => { }} className="bg-custom-500 text-white-100 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px] mt-4">Redeem</button>
+                        <button onClick={() => setShowIssueModal(true)} className="bg-custom-500 text-white-100 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px] mt-4">Buy</button>
+                        <button onClick={() => setShowRedeemModal(true)} className="bg-custom-500 text-white-100 font-bold py-2 px-6 rounded-lg cursor-pointer min-w-[140px] mt-4">Redeem</button>
                     </div>
                 </div>
                 <div className="border-[1px] w-full border-gray-200 rounded-md my-10 bg-white-100">
@@ -58,6 +64,29 @@ function ExploreBasket() {
                 </div>
             </div>
         </div>
+        {showIssueModal && (
+                <div>
+                    <div
+                        onClick={() => setShowIssueModal(false)}
+                        className="absolute top-0 left-0 w-screen h-screen bg-gray-600 opacity-50"
+                    ></div>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                        <IssueTokenModal type="issue" tokenDetails={data} onClose={() => setShowIssueModal(false)} />
+                    </div>
+                </div>
+            )}
+            {showRedeemModal && (
+                <div>
+                    <div
+                        onClick={() => setShowRedeemModal(false)}
+                        className="absolute top-0 left-0 w-screen h-screen bg-gray-600 opacity-50"
+                    ></div>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                        <IssueTokenModal tokenDetails={data} type="redeem" onClose={() => setShowRedeemModal(false)} />
+                    </div>
+                </div>
+            )}
+        </>
     )
 }
 
