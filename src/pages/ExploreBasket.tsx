@@ -97,7 +97,7 @@ type TokenIconProps = {
     logo?: string
 }
 
-const TokenIcon = ({ logo, symbol }: TokenIconProps) => {
+export const TokenIcon = ({ logo, symbol }: TokenIconProps) => {
     return <div className="flex items-center gap-4 font-medium">
         {logo && <img src={logo} className="h-7 w-7 rounded-full" />}
         {symbol && <p>{symbol}</p>}
