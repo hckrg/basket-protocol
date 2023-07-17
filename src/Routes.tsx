@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import ExploreDashboard from './pages/ExploreDashboard'
+import ExploreBasket from './pages/ExploreBasket'
 
 function AppRoutes() {
   return (
@@ -7,7 +8,7 @@ function AppRoutes() {
         <Routes>
             <Route 
                 path='/'
-                Component={ExploreDashboard}
+                Component={ExploreBasket}
             />
             {/* <Route 
                 path='/token/:tokenId'
