@@ -29,6 +29,7 @@ const createBasketToken = async () => {
                 arg(name, t.String),
                 arg(Buffer.from(contractCode, "utf-8").toString("hex"), t.String),
             ],
+            // @ts-ignore-next-line
             payer: signer,
             proposer: signer,
             authorizations: [signer],
