@@ -20,7 +20,7 @@ const investmentThemes = [
   },
 ];
 
-type TokenDetails = {
+export type TokenDetails = {
   name: string;
   underlyingTokens: string[];
   symbol: string;
