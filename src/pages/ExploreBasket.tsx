@@ -2,6 +2,7 @@ import Dashboard_Navbar from "../components/Dashboard_Navbar"
 import logo from '../assets/react.svg'
 import { allTokens, getTokenBySymbol } from "../utils/getTokenDetails";
 import { useNavigate } from "react-router-dom";
+import { TokenDetails } from "./ExploreDashboard";
 
 function ExploreBasket() {
     const navigate = useNavigate()
